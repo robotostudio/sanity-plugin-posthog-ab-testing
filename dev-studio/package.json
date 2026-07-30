@@ -1,0 +1,22 @@
+{
+  "name": "posthog-ab-testing-dev-studio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Vanilla Sanity Studio test harness for sanity-plugin-posthog-ab-testing (ROB-2478). Not published.",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sanity": "^6.7.0",
+    "sanity-plugin-posthog-ab-testing": "file:..",
+    "styled-components": "^6.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.3"
+  }
+}
