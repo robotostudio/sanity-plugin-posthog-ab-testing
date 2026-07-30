@@ -426,7 +426,9 @@ getPostHogCookieName. If it does not exist, STOP and report it.
 This project renders pages from Sanity "page" documents (or equivalents). You will need two
 existing host helpers; find them before writing files and use their real import paths:
   - a Sanity fetch helper that runs a GROQ query with params (e.g. sanityFetch from
-    next-sanity, or a client.fetch wrapper)
+    next-sanity, or a client.fetch wrapper). Note its return shape: next-sanity's
+    sanityFetch resolves to `{ data }`; a plain client.fetch wrapper returns the
+    query result directly.
   - a function that loads one renderable page document by its slug (called
     fetchPageBySlug below)
 If the project has nothing equivalent, STOP and report what is missing.
@@ -552,10 +554,14 @@ const resolveVariantPage = cache(async (params: ABTestParams) => {
   const flags = decodeFlags(params.variant);
   const pageSlug = toSanitySlug(slugPath);
 
-  const abTest: ABTestResult = await sanityFetch({
+  // next-sanity's sanityFetch resolves to `{ data }`. TODO(host): if this
+  // project's fetch helper returns the query result directly (a client.fetch
+  // wrapper), change this to `const abTest = (await ...) as ABTestResult`.
+  const { data } = await sanityFetch({
     query: AB_TEST_BY_SLUG_QUERY,
     params: { slug: pageSlug },
   });
+  const abTest = data as ABTestResult;
 
   // No active test for this slug — render the requested page normally
   if (!abTest?.variantMap || !abTest.posthogFlagKey) {
@@ -874,6 +880,7 @@ if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
     api_host:
       process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
     defaults: '2026-01-30',
+    capture_exceptions: true,
     capture_pageview: 'history_change',
     capture_pageleave: true,
     persistence: 'localStorage+cookie',
