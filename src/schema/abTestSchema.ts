@@ -98,6 +98,7 @@ export function defineAbTestSchema(config: ResolvedConfig): ReturnType<typeof de
         of: [
           {
             type: 'object',
+            name: 'variant',
             fields: [
               defineField({
                 name: 'variantKey',

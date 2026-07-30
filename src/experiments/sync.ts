@@ -34,7 +34,7 @@ export function randomKey(length = 12): string {
 
 /**
  * Additive only: appends one stub entry per missing PostHog key
- * (`{_key, variantKey}` with `page` empty). Never removes or overwrites —
+ * (`{_type: 'variant', _key, variantKey}` with `page` empty). Never removes or overwrites —
  * stale keys stay warning-only. The `Rule.required()` on `page` then drives
  * the editor to finish each mapping.
  */
@@ -44,7 +44,7 @@ export function buildAddMissingVariantsPatches(missingKeys: string[]): Record<st
     {
       insert: {
         after: 'variants[-1]',
-        items: missingKeys.map((variantKey) => ({_key: randomKey(), variantKey})),
+        items: missingKeys.map((variantKey) => ({_type: 'variant', _key: randomKey(), variantKey})),
       },
     },
   ]
