@@ -338,12 +338,13 @@ Run the prompts in order. The app compiles and has a checkable behaviour after e
 Two tiny modules with no observable behaviour of their own (the Verify is honestly just a typecheck). `lib/ab-testing.ts` is the **single source of truth** for the cookie names and the `control` key — every later prompt imports from it; nothing restates the constants.
 
 ````text
-You are working in a Next.js App Router project (15.3+) that uses PostHog. If posthog-js is
-not yet installed or NEXT_PUBLIC_POSTHOG_KEY is not set, ask the human before continuing.
+You are working in a Next.js App Router project (15.3+) that uses PostHog. If
+NEXT_PUBLIC_POSTHOG_KEY is not set, ask the human before continuing.
 
-Install dependencies:
+Install dependencies (posthog-js is used by later prompts — installing it here keeps
+every subsequent prompt compiling on a fresh project):
 
-  npm install posthog-node
+  npm install posthog-node posthog-js
 
 Required env (add to .env.local if missing):
   NEXT_PUBLIC_POSTHOG_KEY    — the PostHog project API key (starts with phc_)
@@ -731,7 +732,9 @@ function isAbTestEligible(pathname: string): boolean {
 
   // TODO(host): list every route tree that is NOT rendered from Sanity page
   // documents (e.g. '/blog', '/search', '/account'). '/test' must always be
-  // listed — it is the variant route itself.
+  // listed — it is the variant route itself. Include '/' too if your homepage
+  // is not a Sanity page, or visitors with a variant assignment will hit a
+  // rewrite that 404s on the homepage.
   const dedicatedRoutes = ['/test'];
   for (const route of dedicatedRoutes) {
     if (pathname === route || pathname.startsWith(`${route}/`)) return false;
