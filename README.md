@@ -1219,3 +1219,7 @@ npm run lint       # oxlint
 ```
 
 To develop against a real studio, use [`npm run link-watch`](https://github.com/sanity-io/plugins/tree/main/packages/@sanity/plugin-kit#developing-the-plugin) and `npx yalc add sanity-plugin-posthog-ab-testing` in the studio.
+
+### Development
+
+[`dev-studio/`](dev-studio/) is a vanilla Studio test harness that consumes the built `dist/` output and covers every editor state via switchable fixtures (`SANITY_STUDIO_AB_FIXTURE=static|empty|throwing|slow|route`). Run `npm run build` at the repo root, then `cd dev-studio && npm install && npm run dev` — see [dev-studio/README.md](dev-studio/README.md) for the fixture modes and observation checklist.
