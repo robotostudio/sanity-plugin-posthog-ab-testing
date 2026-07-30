@@ -17,6 +17,17 @@ const pageType = defineType({
       type: 'slug',
       options: {source: 'title'},
     }),
+    defineField({
+      name: 'buttonColor',
+      title: 'Button Color',
+      type: 'string',
+      options: {list: ['red', 'blue']},
+    }),
+    defineField({
+      name: 'buttonLabel',
+      title: 'Button Label',
+      type: 'string',
+    }),
   ],
 })
 
