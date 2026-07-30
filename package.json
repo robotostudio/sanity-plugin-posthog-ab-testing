@@ -3,25 +3,29 @@
   "version": "0.0.1",
   "description": "Page-level A/B testing for Sanity Studio driven by PostHog experiments: map PostHog variants to Sanity pages, with live experiment status, sync, and a kill switch",
   "keywords": [
-    "sanity",
-    "sanity-plugin",
-    "posthog",
     "ab-testing",
     "experiments",
-    "personalization"
+    "personalization",
+    "posthog",
+    "sanity",
+    "sanity-plugin"
   ],
   "homepage": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing#readme",
   "bugs": {
     "url": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing/issues"
   },
+  "license": "MIT",
+  "author": "Roboto Studio <jono@robotostudio.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing"
   },
-  "license": "MIT",
-  "author": "Roboto Studio <jono@robotostudio.com>",
-  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/index.ts",
@@ -29,10 +33,14 @@
     },
     "./package.json": "./package.json"
   },
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    }
+  },
   "scripts": {
     "build": "plugin-kit verify-package --silent && pkg-utils build --strict --check --clean",
     "format": "oxfmt",
@@ -43,7 +51,6 @@
     "typecheck": "tsc --noEmit",
     "watch": "pkg-utils watch --strict"
   },
-  "browserslist": "extends @sanity/browserslist-config",
   "dependencies": {
     "@sanity/icons": "^5.2.1",
     "@sanity/ui": "^3.5.1",
@@ -70,16 +77,9 @@
     "sanity": "^5 || ^6.0.0-0",
     "styled-components": "^6.1"
   },
+  "browserslist": "extends @sanity/browserslist-config",
   "engines": {
     "node": ">=20.19 <22 || >=22.12"
   },
-  "packageManager": "npm@11.17.0",
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "default": "./dist/index.js"
-      },
-      "./package.json": "./package.json"
-    }
-  }
+  "packageManager": "npm@11.17.0"
 }
