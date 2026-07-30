@@ -196,20 +196,6 @@ a {
   color: var(--muted);
 }
 
-.demo-footer-note {
-  font-size: 0.875rem;
-  color: var(--muted);
-  text-align: center;
-  text-wrap: balance;
-  padding-inline: 1rem;
-}
-
-.demo-footer-note a {
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
-}
-
 /* ---------------------------------------------------------------- */
 /* Live experiment results panel                                     */
 /* ---------------------------------------------------------------- */
@@ -336,11 +322,6 @@ a {
   line-height: 1.6;
   text-wrap: pretty;
   max-width: 48ch;
-}
-
-.edit-note {
-  text-align: left;
-  padding-inline: 0;
 }
 
 /* Inline stats: borderless columns, current variant marked by a left rule */

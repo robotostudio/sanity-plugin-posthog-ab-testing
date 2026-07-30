@@ -67,12 +67,14 @@ function isFileLikePath(pathname: string): boolean {
 function isAbTestEligible(pathname: string): boolean {
   if (isFileLikePath(pathname)) return false;
 
-  // TODO(host) filled: '/' is this demo's static (non-Sanity) landing page;
-  // '/test' must always be listed — it is the variant route itself. '/a' is
-  // the forced-control preview URL: next.config rewrites it to the test route
-  // itself, so the proxy must not rewrite it first. (/b is a real Sanity page
-  // and flows through the normal control-page rule.)
-  const dedicatedRoutes = ['/test', '/', '/a'];
+  // TODO(host) filled: '/test' must always be listed — it is the variant
+  // route itself. '/a' is the forced-control preview URL: next.config
+  // rewrites it to the test route itself, so the proxy must not rewrite it
+  // first. (/b is a real Sanity page and flows through the normal
+  // control-page rule.) '/' IS eligible — the homepage runs the experiment,
+  // travelling as the '_home' sentinel which the test route maps to the
+  // 'home' slug.
+  const dedicatedRoutes = ['/test', '/a'];
   for (const route of dedicatedRoutes) {
     if (pathname === route || pathname.startsWith(`${route}/`)) return false;
   }
@@ -88,14 +90,19 @@ export async function proxy(request: NextRequest) {
   }
 
   // --- Identity: reuse PostHog's cookie, or mint a uuidv7 for new visitors ---
-  let distinctId = getDistinctId(request);
+  // Demo roulette: the homepage ignores the sticky cookie identity and mints
+  // a fresh id every request, so each refresh of '/' re-rolls the 50/50
+  // assignment. Other routes keep the normal sticky behavior.
+  const isRoulette = pathname === '/';
+  let distinctId = isRoulette ? null : getDistinctId(request);
   const isNewUser = !distinctId;
   if (!distinctId) distinctId = uuidv7();
   requestHeaders.set('x-ph-distinct-id', distinctId);
 
-  // --- Evaluate flags server-side (cache first) ---
+  // --- Evaluate flags server-side (cache first; roulette skips the cache
+  // both ways — fresh ids never hit, and caching them would just fill it) ---
   let flags: Record<string, string | boolean> = {};
-  const cached = getCachedFlags(distinctId);
+  const cached = isRoulette ? null : getCachedFlags(distinctId);
   if (cached) {
     flags = cached;
   } else {
@@ -103,7 +110,7 @@ export async function proxy(request: NextRequest) {
     if (posthog) {
       try {
         flags = await posthog.getAllFlags(distinctId);
-        setCachedFlags(distinctId, flags);
+        if (!isRoulette) setCachedFlags(distinctId, flags);
       } catch {
         // Flag evaluation failed — serve the page without A/B testing.
       } finally {

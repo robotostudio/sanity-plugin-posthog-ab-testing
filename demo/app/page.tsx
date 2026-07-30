@@ -1,20 +1,15 @@
-import Link from "next/link";
+import { notFound } from 'next/navigation';
+import { DemoPage } from '@/components/demo-page';
+import { fetchPageBySlug } from '@/sanity/lib/fetch';
 
-export default function Home() {
-  return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <p>
-        Demo for sanity-plugin-posthog-ab-testing —{" "}
-        <Link href="/home">visit the A/B-tested page</Link>
-      </p>
-    </main>
-  );
+/**
+ * Homepage = the A/B-tested demo page. Normally the proxy rewrites '/' to the
+ * variant route (as the '_home' sentinel) before this renders; this direct
+ * render is the fallback when flag evaluation fails or PostHog is down, and
+ * serves the control page.
+ */
+export default async function Home() {
+  const page = await fetchPageBySlug('home');
+  if (!page) notFound();
+  return <DemoPage page={page} />;
 }

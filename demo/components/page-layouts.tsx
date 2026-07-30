@@ -1,6 +1,6 @@
 'use client';
 
-import { DemoPushButton, EXPERIMENT_URL } from '@/components/page-view';
+import { DemoPushButton } from '@/components/page-view';
 import { ExperimentStatsCards } from '@/components/experiment-stats-cards';
 import type { ExperimentStats } from '@/lib/experiment-stats';
 import type { Page } from '@/sanity/lib/fetch';
@@ -35,9 +35,6 @@ export function EditorialLayout({
           <div className="edit-stats">
             <ExperimentStatsCards stats={stats} currentVariant={page.buttonColor ?? null} />
           </div>
-          <p className="demo-footer-note edit-note">
-            Experiment dashboard — <a href={EXPERIMENT_URL}>{EXPERIMENT_URL}</a>
-          </p>
         </div>
         <div className="edit-stage">
           <DemoPushButton page={page} />

@@ -5,8 +5,6 @@ import { fireButtonConfetti } from '@/lib/confetti';
 import { emitDemoButtonClick } from '@/lib/demo-button-click';
 import type { Page } from '@/sanity/lib/fetch';
 
-export const EXPERIMENT_URL = 'https://us.posthog.com/project/535024/experiments/393767';
-
 /**
  * The big sprite push button, the centerpiece of every demo page. Color and
  * label come from the Sanity page document.
@@ -21,13 +19,18 @@ export const EXPERIMENT_URL = 'https://us.posthog.com/project/535024/experiments
  */
 export function DemoPushButton({ page }: { page: Page }) {
   const buttonColor = page.buttonColor ?? 'white';
+  // PostHog flag keys are frozen: control = white "A", blue = black "B".
+  const variantKey = buttonColor === 'black' ? 'blue' : 'control';
   return (
     <button
       type="button"
       className="push-button"
       data-button-color={buttonColor}
       onClick={(event) => {
-        posthog.capture('demo_button_clicked');
+        // variant_shown records the page actually rendered — with the
+        // homepage re-rolling variants per refresh, the visitor's sticky flag
+        // assignment can differ from what's on screen.
+        posthog.capture('demo_button_clicked', { variant_shown: variantKey });
         fireButtonConfetti(buttonColor, event.currentTarget);
         emitDemoButtonClick(buttonColor);
       }}

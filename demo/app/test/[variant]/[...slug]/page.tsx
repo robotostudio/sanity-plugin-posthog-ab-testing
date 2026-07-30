@@ -28,11 +28,11 @@ function decodeFlags(encoded: string): Record<string, string> {
 /**
  * Convert the URL slug path to the format stored in Sanity's slug.current.
  * The homepage travels as '_home'; other pages store slugs without a leading
- * slash. TODO(host) reviewed: this demo stores slugs without leading slashes
- * and has no Sanity-backed homepage, so the default mapping stands.
+ * slash. TODO(host) filled: this demo's homepage document is the 'home' slug
+ * (the experiment's control page), so '/' serves the A/B test directly.
  */
 function toSanitySlug(slugPath: string): string {
-  return slugPath === '_home' ? '/' : slugPath;
+  return slugPath === '_home' ? 'home' : slugPath;
 }
 
 /**

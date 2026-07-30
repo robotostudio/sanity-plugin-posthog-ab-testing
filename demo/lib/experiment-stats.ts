@@ -14,10 +14,13 @@ const FLAG_KEY = 'demo-button-color';
 /**
  * One combined query (halves our /query rate-limit spend): exposure rows are
  * unique persons served each variant; click rows are total clicks + unique
- * clickers per variant, attributed via the flag property posthog-js stamps on
- * every event. Columns: kind, variant, a, b.
+ * clickers per variant. Clicks attribute via variant_shown (stamped at
+ * capture time with the page actually rendered — the homepage re-rolls
+ * variants per refresh, so the sticky flag can disagree), falling back to the
+ * $feature/ property for events captured before variant_shown existed.
+ * Columns: kind, variant, a, b.
  */
-const STATS_SQL = `SELECT 'exposure' AS kind, properties.$feature_flag_response AS variant, count(DISTINCT distinct_id) AS a, 0 AS b FROM events WHERE event = '$feature_flag_called' AND properties.$feature_flag = '${FLAG_KEY}' AND timestamp >= now() - INTERVAL 30 DAY GROUP BY variant UNION ALL SELECT 'click' AS kind, properties['$feature/${FLAG_KEY}'] AS variant, count() AS a, count(DISTINCT distinct_id) AS b FROM events WHERE event = 'demo_button_clicked' AND timestamp >= now() - INTERVAL 30 DAY GROUP BY variant`;
+const STATS_SQL = `SELECT 'exposure' AS kind, properties.$feature_flag_response AS variant, count(DISTINCT distinct_id) AS a, 0 AS b FROM events WHERE event = '$feature_flag_called' AND properties.$feature_flag = '${FLAG_KEY}' AND timestamp >= now() - INTERVAL 30 DAY GROUP BY variant UNION ALL SELECT 'click' AS kind, coalesce(properties.variant_shown, properties['$feature/${FLAG_KEY}']) AS variant, count() AS a, count(DISTINCT distinct_id) AS b FROM events WHERE event = 'demo_button_clicked' AND timestamp >= now() - INTERVAL 30 DAY GROUP BY variant`;
 
 export type VariantStats = {
   exposures: number;
