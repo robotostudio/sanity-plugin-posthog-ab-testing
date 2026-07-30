@@ -1,0 +1,85 @@
+{
+  "name": "sanity-plugin-posthog-ab-testing",
+  "version": "0.0.1",
+  "description": "Page-level A/B testing for Sanity Studio driven by PostHog experiments: map PostHog variants to Sanity pages, with live experiment status, sync, and a kill switch",
+  "keywords": [
+    "sanity",
+    "sanity-plugin",
+    "posthog",
+    "ab-testing",
+    "experiments",
+    "personalization"
+  ],
+  "homepage": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing#readme",
+  "bugs": {
+    "url": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robotostudio/sanity-plugin-posthog-ab-testing"
+  },
+  "license": "MIT",
+  "author": "Roboto Studio <jono@robotostudio.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "plugin-kit verify-package --silent && pkg-utils build --strict --check --clean",
+    "format": "oxfmt",
+    "link-watch": "plugin-kit link-watch",
+    "lint": "oxlint",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "watch": "pkg-utils watch --strict"
+  },
+  "browserslist": "extends @sanity/browserslist-config",
+  "dependencies": {
+    "@sanity/icons": "^5.2.1",
+    "@sanity/ui": "^3.5.1",
+    "suspend-react": "^0.1.3"
+  },
+  "devDependencies": {
+    "@sanity/browserslist-config": "^1.0.5",
+    "@sanity/pkg-utils": "^11.0.17",
+    "@sanity/plugin-kit": "^10.0.2",
+    "@types/react": "^19.2.17",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.76.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sanity": "^6.7.0",
+    "styled-components": "^6.4.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "peerDependencies": {
+    "react": "^19.2",
+    "react-dom": "^19.2",
+    "sanity": "^5 || ^6.0.0-0",
+    "styled-components": "^6.1"
+  },
+  "engines": {
+    "node": ">=20.19 <22 || >=22.12"
+  },
+  "packageManager": "npm@11.17.0",
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    }
+  }
+}
