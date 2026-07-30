@@ -61,3 +61,6 @@ dist
 
 # dev-studio local env
 dev-studio/.env
+
+# Vercel
+.vercel
