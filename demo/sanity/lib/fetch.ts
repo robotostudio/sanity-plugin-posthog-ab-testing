@@ -26,7 +26,7 @@ export type Page = {
   _id: string;
   title: string | null;
   slug: string | null;
-  buttonColor: 'red' | 'blue' | null;
+  buttonColor: 'white' | 'black' | null;
   buttonLabel: string | null;
 };
 

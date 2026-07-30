@@ -1,13 +1,24 @@
+/*
+ * Roboto Studio aesthetic: monochrome zinc, sharp corners, hairline
+ * "engineering drawing" grid, Geist / Geist Mono, inverted selection.
+ */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #09090b;
+  --muted: #71717a;
+  --surface: #f4f4f5;
+  --line: #e4e4e7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Resolved theme lives on <html data-theme>, set pre-paint by the inline
+ * script in app/layout.tsx and toggled from the header (site-chrome.tsx). */
+html[data-theme='dark'] {
+  --background: #141414;
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --surface: #27272a;
+  --line: #27272a;
+  color-scheme: dark;
 }
 
 html {
@@ -26,9 +37,20 @@ body {
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), 'Geist', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Inverted selection — text becomes the page background color */
+::selection {
+  background: #27272a;
+  color: #ffffff;
+}
+
+html[data-theme='dark'] ::selection {
+  background: #e4e4e7;
+  color: #141414;
 }
 
 * {
@@ -42,8 +64,418 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* ---------------------------------------------------------------- */
+/* Site chrome, mirroring the proposals app: fixed hairline borders  */
+/* down the 1280px column + bottom edge, and the header sandwich     */
+/* (spacer / rule / logo row + theme toggle / rule / spacer).        */
+/* ---------------------------------------------------------------- */
+
+.edge-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.edge-frame-inner {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  height: 100%;
+}
+
+.edge-frame-borders {
+  border-inline: 1px solid var(--line);
+  height: 100%;
+}
+
+.edge-frame-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  pointer-events: none;
+  border-top: 1px solid var(--line);
+}
+
+.site-header {
+  position: relative;
+  background: var(--background);
+}
+
+.header-band {
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+.header-spacer {
+  border-inline: 1px solid var(--line);
+  height: 1rem;
+}
+
+.header-rule {
+  border: none;
+  border-top: 1px solid var(--line);
+}
+
+.header-row {
+  border-inline: 1px solid var(--line);
+  height: 4rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-logo {
+  width: 215px;
+  border-right: 1px solid var(--line);
+  display: flex;
+}
+
+.header-logo a {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: 1rem;
+  color: var(--foreground);
+}
+
+.theme-toggle {
+  display: flex;
+  border-left: 1px solid var(--line);
+  height: 100%;
+  width: 180px;
+}
+
+.theme-toggle button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  color: var(--muted);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.theme-toggle button:not(:last-child) {
+  border-right: 1px solid var(--line);
+}
+
+.theme-toggle button:hover {
+  color: var(--foreground);
+}
+
+.theme-toggle button[data-active='true'] {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+/* Main content column, matching the proposals inner container */
+.page-main {
+  flex: 1;
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  position: relative;
+}
+
+.page-inner {
+  padding: 4rem 1rem;
+}
+
+/* Mono uppercase eyebrow / metadata signature */
+.demo-eyebrow {
+  font-family: var(--font-geist-mono), 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.demo-footer-note {
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-align: center;
+  text-wrap: balance;
+  padding-inline: 1rem;
+}
+
+.demo-footer-note a {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Live experiment results panel                                     */
+/* ---------------------------------------------------------------- */
+
+.stats-warming {
+  text-align: center;
+  color: var(--muted);
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Sharp cards: 1px border, no radius, no shadow */
+.stat-card {
+  flex: 1 1 220px;
+  max-width: 300px;
+  border: 1px solid var(--line);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-card[data-current='true'] {
+  border-color: var(--foreground);
+  outline: 1px solid var(--foreground);
+  outline-offset: -2px;
+}
+
+.stat-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+}
+
+.stat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* tiny circular variant swatch — the only round thing besides the button */
+.stat-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  flex: none;
+}
+
+.stat-swatch[data-color='white'] {
+  background: #f5f5f5;
+}
+
+.stat-swatch[data-color='black'] {
+  background: #111111;
+}
+
+.stat-current-tag {
+  font-family: var(--font-geist-mono), 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--foreground);
+  color: var(--background);
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stat-row-label {
+  color: var(--muted);
+}
+
+.stat-row-value {
+  font-family: var(--font-geist-mono), 'Geist Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- */
+/* Alternative layout: editorial                                     */
+/* Left-aligned copy + inline borderless stats; framed button right  */
+/* ---------------------------------------------------------------- */
+
+.edit-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 3rem;
+  align-items: center;
+  min-height: 34rem;
+}
+
+.edit-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.edit-headline {
+  font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+  max-width: 20ch;
+}
+
+.edit-sub {
+  color: var(--muted);
+  line-height: 1.6;
+  text-wrap: pretty;
+  max-width: 48ch;
+}
+
+.edit-note {
+  text-align: left;
+  padding-inline: 0;
+}
+
+/* Inline stats: borderless columns, current variant marked by a left rule */
+.edit-stats {
+  width: 100%;
+}
+
+.edit-stats .stats-grid {
+  justify-content: flex-start;
+  gap: 2.5rem;
+}
+
+.edit-stats .stat-card {
+  border: none;
+  padding: 0;
+  max-width: 20rem;
+}
+
+.edit-stats .stat-card[data-current='true'] {
+  outline: none;
+  border: none;
+}
+
+/* Sits on its own line below the card title */
+.stat-current-tag {
+  align-self: flex-start;
+}
+
+.edit-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2.5rem;
+}
+
+@media (max-width: 64rem) {
+  .page-inner {
+    padding: 2rem 1rem 2.5rem;
   }
+
+  .edit-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    min-height: 0;
+  }
+
+  .edit-stage {
+    order: -1;
+  }
+}
+
+/*
+ * Sprite push button (components/page-view.tsx), built the way myinstants.com
+ * does it: the sprite is translucent "glass", so the color comes from a solid
+ * disc layered underneath, not from a tint filter. Their 1:1 geometry
+ * (200x190 button, frames at -5,-5 resting and -215,-5 pressed, 188x174 disc
+ * offset 6,7) is scaled by 1.6 here.
+ */
+.push-button {
+  position: relative;
+  width: 320px;
+  height: 304px;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('/button-shadow.png') no-repeat 0 0 / 100% 100%;
+  cursor: pointer;
+  /* white (control) variant: dark label on the light disc */
+  color: #18181b;
+  font-size: 120px;
+  font-weight: 800;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* colored disc behind the glass sprite */
+.push-button::before {
+  content: '';
+  position: absolute;
+  left: 9.6px;
+  top: 11.2px;
+  width: 300.8px;
+  height: 278.4px;
+  border-radius: 50%;
+  /* off-white so the glass highlights still read */
+  background: #f5f5f5;
+}
+
+.push-button[data-button-color='black'] {
+  color: #fafafa;
+}
+
+.push-button[data-button-color='black']::before {
+  background: #111111;
+}
+
+/* glass sprite; left frame = resting */
+.push-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/button-sprite.png') no-repeat;
+  background-size: 672px 320px;
+  background-position: -8px -8px;
+}
+
+.push-button:active::after {
+  /* right frame = pressed */
+  background-position: -344px -8px;
+}
+
+/*
+ * The glyph paints BETWEEN the colored disc (::before) and the glass sprite
+ * (::after) — no z-index — so the glass highlights wash over it and it reads
+ * as printed on the button face rather than floating above it. Blend modes
+ * marry the ink to the disc: multiply for dark-on-light, screen for
+ * light-on-dark. Sits 32px above dead center, on the dome's upper face.
+ */
+.push-button-label {
+  position: relative;
+  top: calc(-0.06em - 32px);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.push-button[data-button-color='black'] .push-button-label {
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+.push-button:active .push-button-label {
+  /* follow the dome down for tactile feel */
+  transform: translateY(6px);
+  display: inline-block;
 }

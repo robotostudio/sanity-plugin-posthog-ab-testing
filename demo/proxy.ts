@@ -68,8 +68,11 @@ function isAbTestEligible(pathname: string): boolean {
   if (isFileLikePath(pathname)) return false;
 
   // TODO(host) filled: '/' is this demo's static (non-Sanity) landing page;
-  // '/test' must always be listed — it is the variant route itself.
-  const dedicatedRoutes = ['/test', '/'];
+  // '/test' must always be listed — it is the variant route itself. '/a' is
+  // the forced-control preview URL: next.config rewrites it to the test route
+  // itself, so the proxy must not rewrite it first. (/b is a real Sanity page
+  // and flows through the normal control-page rule.)
+  const dedicatedRoutes = ['/test', '/', '/a'];
   for (const route of dedicatedRoutes) {
     if (pathname === route || pathname.startsWith(`${route}/`)) return false;
   }

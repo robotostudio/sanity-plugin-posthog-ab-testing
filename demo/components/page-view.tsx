@@ -1,54 +1,38 @@
 'use client';
 
 import posthog from 'posthog-js';
+import { fireButtonConfetti } from '@/lib/confetti';
+import { emitDemoButtonClick } from '@/lib/demo-button-click';
 import type { Page } from '@/sanity/lib/fetch';
 
-const EXPERIMENT_URL = 'https://us.posthog.com/project/535024/experiments/393767';
+export const EXPERIMENT_URL = 'https://us.posthog.com/project/535024/experiments/393767';
 
 /**
- * The demo page renderer — the "exact component tree" both the normal page
- * route and the variant route render. One big button whose color and label
- * come from the Sanity page document.
+ * The big sprite push button, the centerpiece of every demo page. Color and
+ * label come from the Sanity page document.
+ *
+ * The sprite (/button-sprite.png) is two frames side by side (left = resting,
+ * right = pressed) of a translucent glass dome; the white/black comes from a
+ * solid disc layered beneath it — the same construction myinstants.com uses.
+ * Frame switching and layering live in globals.css (.push-button rules).
+ *
+ * Each press captures the PostHog goal event, fires variant-colored confetti,
+ * and announces itself on window so the stats panel can bump optimistically.
  */
-export function PageView({ page }: { page: Page }) {
-  const background = page.buttonColor === 'blue' ? '#2563eb' : '#dc2626';
-
+export function DemoPushButton({ page }: { page: Page }) {
+  const buttonColor = page.buttonColor ?? 'white';
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 32,
-        fontFamily: 'system-ui, sans-serif',
+    <button
+      type="button"
+      className="push-button"
+      data-button-color={buttonColor}
+      onClick={(event) => {
+        posthog.capture('demo_button_clicked');
+        fireButtonConfetti(buttonColor, event.currentTarget);
+        emitDemoButtonClick(buttonColor);
       }}
     >
-      <button
-        type="button"
-        data-button-color={page.buttonColor ?? 'red'}
-        onClick={() => posthog.capture('demo_button_clicked')}
-        style={{
-          width: 320,
-          height: 320,
-          borderRadius: 24,
-          border: 'none',
-          cursor: 'pointer',
-          background,
-          color: 'white',
-          fontSize: 120,
-          fontWeight: 800,
-        }}
-      >
-        {page.buttonLabel ?? '?'}
-      </button>
-      <p style={{ fontSize: 16, color: '#555' }}>
-        This page is part of a live A/B test —{' '}
-        <a href={EXPERIMENT_URL} style={{ color: '#2563eb' }}>
-          {EXPERIMENT_URL}
-        </a>
-      </p>
-    </main>
+      <span className="push-button-label">{page.buttonLabel ?? '?'}</span>
+    </button>
   );
 }

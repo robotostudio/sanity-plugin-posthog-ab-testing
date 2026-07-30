@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "canvas-confetti": "^1.9.4",
     "next": "16.2.12",
     "next-sanity": "^13.2.3",
     "posthog-js": "^1.408.3",
@@ -19,6 +20,7 @@
     "uuidv7": "^1.2.1"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

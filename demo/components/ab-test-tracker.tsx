@@ -22,7 +22,10 @@ export function ABTestTracker({ flagKey, variant }: ABTestTrackerProps) {
   const tracked = useRef(false);
 
   useEffect(() => {
-    if (!posthog.__loaded || tracked.current) return;
+    // No __loaded guard: posthog-js queues capture/register calls made before
+    // init completes. Guarding on __loaded silently dropped the exposure event
+    // on first page load (the effect never re-runs when loading finishes).
+    if (tracked.current) return;
     tracked.current = true;
 
     // Tell PostHog which variant this user saw — the experiment exposure event

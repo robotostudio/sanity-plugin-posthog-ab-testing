@@ -7,7 +7,7 @@ import { AB_TEST_BY_SLUG_QUERY } from '@/sanity/queries/ab-test';
 import { sanityFetch } from '@/sanity/lib/fetch';
 // TODO(host) filled: this project's "load one page by slug" helper.
 import { fetchPageBySlug } from '@/sanity/lib/fetch';
-import { PageView } from '@/components/page-view';
+import { DemoPage } from '@/components/demo-page';
 
 type ABTestParams = { variant: string; slug: string[] };
 
@@ -105,9 +105,9 @@ export default async function ABTestPage(props: { params: Promise<ABTestParams> 
   return (
     <>
       {flagKey && variant && <ABTestTracker flagKey={flagKey} variant={variant} />}
-      {/* TODO(host) filled: PageView is the exact component tree the normal
+      {/* TODO(host) filled: DemoPage is the exact component tree the normal
           page route (app/[...slug]/page.tsx) uses. */}
-      <PageView page={page} />
+      <DemoPage page={page} />
     </>
   );
 }

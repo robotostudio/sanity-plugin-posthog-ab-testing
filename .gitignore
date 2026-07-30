@@ -58,3 +58,6 @@ yalc.lock
 
 # Compiled plugin
 dist
+
+# dev-studio local env
+dev-studio/.env

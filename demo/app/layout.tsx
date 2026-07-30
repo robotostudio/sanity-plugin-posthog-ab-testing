@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ABTestDevtools } from "@/components/ab-test-devtools";
+import { SiteChrome } from "@/components/site-chrome";
 import "./globals.css";
+
+/* Resolve the persisted theme before first paint so there's no flash.
+ * Mode lives in localStorage ('demo-theme'); the resolved value lands on
+ * <html data-theme> which all theme CSS keys off. */
+const THEME_INIT = `(function(){try{var m=localStorage.getItem('demo-theme');var d=m==='dark'||(m!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){document.documentElement.dataset.theme='light';}})();`;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,8 +30,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body>
+        <SiteChrome />
         {children}
         {process.env.NODE_ENV === "development" && <ABTestDevtools />}
       </body>
