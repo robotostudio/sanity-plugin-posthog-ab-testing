@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shelve.cloud/schema.json",
+  "slug": "robotostudio",
+  "project": "sanity-plugin-posthog-ab-testing",
+  "defaultEnv": "development",
+  "envFileName": ".env.local",
+  "sync": {
+    "protectedEnvironments": [
+      "production"
+    ],
+    "environments": {
+      "development": {
+        "sourceOfTruth": "local"
+      },
+      "production": {
+        "sourceOfTruth": "remote",
+        "pullMode": "merge"
+      }
+    }
+  }
+}
