@@ -2,7 +2,7 @@
 
 Page-level A/B testing for Sanity Studio, driven by PostHog experiments. PostHog decides **who sees what**; Sanity decides **what each variant is**. This plugin gives editors an A/B test document that maps every PostHog experiment variant to a Sanity page — with live experiment status, one-click variant sync, and a kill switch — and this README gives your runtime everything else as copy-paste prompts for a coding agent.
 
-> **Unofficial.** This plugin is not affiliated with or endorsed by PostHog or Sanity. Built and maintained by [Roboto Studio](https://robotostudio.com).
+> **Unofficial.** This plugin is not _currently_ affiliated with or endorsed by PostHog or Sanity — it's built and maintained by [Roboto Studio](https://robotostudio.com). But we are looking to get this tool made official 🤖❤️🦔
 
 ## 1. What it is
 
