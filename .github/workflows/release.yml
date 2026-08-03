@@ -1,0 +1,92 @@
+# FILENAME IS LOAD-BEARING.
+# `npm trust` binds publishing rights to this repository + this exact filename.
+# Renaming this file breaks publishing with no other symptom. Treat it as an API.
+name: CI & Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish a release to npm'
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.14.0 is the minimum leg, NOT 22.12.0: semantic-release@25 declares
+        # engines ^22.14.0 || >=24.10.0, so 22.12 emits EBADENGINE.
+        # The consumer-facing `engines` string in package.json is unaffected.
+        node: ['22.14.0', 'lts/*']
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # No corepack: it is removed from Node >=26 tarballs, which makes it a
+      # time bomb once lts/* rolls past 24.
+      - run: npm i -g npm@^11.17.0
+
+      - run: npm ci
+
+      # `npm audit signatures`, never plain `npm audit` — the latter reports
+      # high-severity advisories inside the sanity dependency chain and would
+      # block every run.
+      - run: npm audit signatures
+
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  release:
+    name: Release
+    needs: test
+    if: github.event_name == 'workflow_dispatch' && inputs.release == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write # required for npm OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # semantic-release needs full history to compute the next version
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm i -g npm@^11.17.0
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # env contains ONLY GITHUB_TOKEN. There is no NPM_TOKEN and there must
+      # never be one — auth comes from the OIDC id-token above. Provenance
+      # (SLSA v1) is emitted automatically under trusted publishing.
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
