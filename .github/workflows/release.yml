@@ -30,10 +30,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 22.14.0 is the minimum leg, NOT 22.12.0: semantic-release@25 declares
-        # engines ^22.14.0 || >=24.10.0, so 22.12 emits EBADENGINE.
-        # The consumer-facing `engines` string in package.json is unaffected.
-        node: ['22.14.0', 'lts/*']
+        # Floor is 22.14.0, NOT 22.12.0: semantic-release@25 declares engines
+        # ^22.14.0 || >=24.10.0, so 22.12 emits EBADENGINE.
+        # Raised again to 22.18.0 because oxlint.config.ts is a TypeScript
+        # config, and native type stripping needs ^20.19.0 || >=22.18.0 — on
+        # 22.14.0 oxlint dies with `Unknown file extension ".ts"`. The config is
+        # a re-export of @sanity/plugin-kit/oxlint, so it cannot become JSON.
+        # 22.18.0 still satisfies ^22.14.0. The consumer-facing `engines` string
+        # in package.json is unaffected — this is a dev-toolchain floor only.
+        node: ['22.18.0', 'lts/*']
     steps:
       - uses: actions/checkout@v6
 
